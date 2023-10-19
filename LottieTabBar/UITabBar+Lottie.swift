@@ -40,15 +40,19 @@ extension UITabBar {
     }
 
     private func addLottieImageInMainThread(index: Int, lottieName: String) {
-        let lottieView = LOTAnimationView(name: lottieName)
+        /*
+         LottieAnimationView(animation: LottieAnimation.named("sweepbright")), speed: 1.0, loop: false
+         */
+
+        let lottieView = LottieAnimationView(name: lottieName)
         let totalW = UIScreen.main.bounds.size.width
         let singleW = totalW / CGFloat(self.items?.count ?? 1)
         let x = ceil(CGFloat(index) * singleW + (singleW - LOTAnimationViewWidth) / 2.0)
         let y:CGFloat = 5.0
         lottieView.frame = CGRect(x: x, y: y, width: LOTAnimationViewWidth, height: LOTAnimationViewHeight)
         lottieView.isUserInteractionEnabled = false
-        lottieView.contentMode = .scaleAspectFit
-        lottieView.loopAnimation = false
+        lottieView.contentMode = UIView.ContentMode.scaleAspectFit
+        lottieView.loopMode = .playOnce
         lottieView.tag = 1000 + index;
         self.addSubview(lottieView)
     }
@@ -88,8 +92,8 @@ extension UITabBar {
     // 点击动画
     func animationLottieImage(index: Int) {
         stopAnimationAllLottieView()
-        if let lottieView = self.viewWithTag(1000 + index) as? LOTAnimationView {
-            lottieView.animationProgress = 0.0
+        if let lottieView = self.viewWithTag(1000 + index) as? LottieAnimationView {
+            lottieView.currentProgress = 0.0
             lottieView.play { _ in
                 UITabBar.lastTag = 1000 + index
             }
@@ -100,8 +104,8 @@ extension UITabBar {
     func withOutAnimationLottieImage(index: Int) {
         guard let items = items, index < items.count else { return }
         stopAnimationAllLottieView()
-        if let lottieView = self.viewWithTag(1000 + index) as? LOTAnimationView {
-            lottieView.animationProgress = 1.0
+        if let lottieView = self.viewWithTag(1000 + index) as? LottieAnimationView {
+            lottieView.currentProgress = 1.0
         }
     }
 
@@ -110,7 +114,7 @@ extension UITabBar {
         guard let items = self.items else { return }
         var i = 0
         for _ in items {
-            if let lottieView = self.viewWithTag(1000 + i) as? LOTAnimationView {
+            if let lottieView = self.viewWithTag(1000 + i) as? LottieAnimationView {
                 if UITabBar.lastTag == 1000 + i {
                     lottieView.play(fromProgress: 1.0, toProgress: 0.0) { _ in
                         lottieView.stop()
